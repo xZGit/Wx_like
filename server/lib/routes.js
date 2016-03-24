@@ -6,8 +6,8 @@
 const router = require('koa-router')();
 const fs = require( 'fs' );
 const path = require( 'path' );
-const Wechat = require('wechat4u');
 const botInstance = require('./wc-instance');
+import  Wechat from './wechat';
 
 module.exports = function routers(app, config){
 
@@ -26,7 +26,30 @@ module.exports = function routers(app, config){
     });
 
 
+    router.get('/login/:uuid', async function (ctx, next) {
+        let bot = botInstance.get(ctx.params.uuid);
+        ctx.body = await bot.start()
+            .then(() => {
+                bot.on('logout', () => {
+                    botInstance.delete[ctx.params.uuid];
+                });
+                return {status: 0};
+            })
+            .catch(err => {
+                botInstance.delete[ctx.params.uuid];
+                return {status: 1};
+            });
+    });
 
+
+    router.get('/friends/:uuid',  async function (ctx, next) {
+        let bot = botInstance.get(ctx.params.uuid);
+        if (bot && bot.state === Wechat.STATE.login) {
+            ctx.body = {status:0, friends: bot.friends};
+        } else {
+            ctx.body = {status: 1};
+        }
+    });
 
 
 
