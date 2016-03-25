@@ -83,6 +83,7 @@ export class Chat {
                 f.msg.push({type: "receive" , content : data["content"]});
                 if(!self.chatFriend || self.chatFriend.username !== data["from"])f.msgCount++ ;
                 self.friends  = self.sort(self.friends, f);
+                self.scroll();
             }
         });
 
@@ -94,6 +95,7 @@ export class Chat {
                 let f =self.friendsMap.get(data["to"]);
                 f.msg.push({type: "send" , content : data["content"]});
                 self.friends  = self.sort(self.friends , f);
+                self.scroll();
         }
         });
 
@@ -113,6 +115,11 @@ export class Chat {
         arr.unshift(key);
         return arr;
     }
+
+    scroll(){
+        document.getElementById("msg_body").scrollTop = 1000000;
+    }
+
 
     sendMsg(friend, content){
         content = content.trim();

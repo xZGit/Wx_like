@@ -5,12 +5,12 @@
     left:200px;
     top:50px;
     width:250px;
-    overflow: scroll;
 }
 .chat_body{
     background:white;
     height:400px;
     padding:5px 0px;
+    overflow: scroll;
 }
 
 .chat_head,.msg_head{
@@ -48,7 +48,7 @@
     background:white;
     height:200px;
     font-size:12px;
-    padding:15px;
+    padding:15px 15px 40px 15px;
     overflow:auto;
     overflow-x: hidden;
 }
@@ -61,6 +61,11 @@
     -moz-box-sizing: border-box;    /* Firefox, other Gecko */
     box-sizing: border-box;
 }
+
+.msg_footer{
+    margin-top: 5px;
+}
+
 
 .close{
     float:right;

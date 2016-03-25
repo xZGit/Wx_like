@@ -12,9 +12,9 @@
             <div class="close">x</div>
         </div>
         <div class="msg_wrap">
-            <div class="msg_body">
+            <div class="msg_body" id="msg_body">
                 <div *ngFor="#msg of chatFriend.msg" [class]="msg.type == 'send' ? 'msg_b' : 'msg_a'" >{{msg.content}}</div>
-                <div class="msg_push"></div>
+                <!--<div class="msg_push"></div>-->
             </div>
             <div class="msg_footer"><textarea [(ngModel)]="newMsg" autofocus="" (keyup.enter)="sendMsg(chatFriend, newMsg)" class="msg_input" rows="4" ></textarea></div>
         </div>
