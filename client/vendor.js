@@ -11,3 +11,4 @@ import 'angular2/router';
 
 import 'todomvc-app-css/index.css';
 import 'todomvc-common/base.css';
+import './css/chat.css';

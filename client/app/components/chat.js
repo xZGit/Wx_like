@@ -22,13 +22,13 @@ export class Chat {
         this._uuidStore = uuidStore;
         this._router= router;
         this._http = http;
-
+        this.friendsMap = new Map();
     }
 
     ngOnInit(){
         this._uuid = this._uuidStore.get();
         if(!this._uuid) {
-            this._router.navigate( ['Todo']);
+            this.backLogin();
             return
         }
         this.socket = IO.connect('/' , {
@@ -44,34 +44,91 @@ export class Chat {
         this._router.navigate( ['Login']);
     }
 
+    setChatFriend(friend){
+        friend.msgCount = 0;
+        this.chatFriend = friend;
+        console.log(this.chatFriend);
+    }
 
     getFriends(){
         this._http.get(`/friends/${this._uuid}`).subscribe(res=> {
             res = res.json();
             if(res.status == 0){
                 this.friends = res.friends;
+                for (let f of  this.friends.values()) {
+                     f.msg = [];
+                     f.msgCount = 0;
+                     this.friendsMap.set(f.username, f);
+                }
             }else{
                 this.backLogin();
             }
         });
     }
 
-
     initSocket(socket){
         const self = this;
-        socket.emit('login' , this._uuid, function (status) {
+        socket.emit('login' , self._uuid, function (status) {
+            console.log("login" , status);
             if(status != "success"){
-                //self._router.navigate( ['Todo']);
+                 self.backLogin();
             }
             self.getFriends();
         });
 
-        socket.on('newMessage' , function(){
-            console.log(arguments);
+        socket.on('receiveText' , function(data){
+            console.log('receive' , data);
+            if(data && data["from"]){
+                let f =self.friendsMap.get(data["from"]);
+                f.msg.push({type: "receive" , content : data["content"]});
+                if(!self.chatFriend || self.chatFriend.username !== data["from"])f.msgCount++ ;
+                self.friends  = self.sort(self.friends, f);
+            }
+        });
+
+
+
+        socket.on('sendText' , function(data){
+            console.log('send' , data);
+            if(data && data["to"]){
+                let f =self.friendsMap.get(data["to"]);
+                f.msg.push({type: "send" , content : data["content"]});
+                self.friends  = self.sort(self.friends , f);
+        }
         });
 
     }
 
+    sort(arr , key){
+        console.log("sort begin");
+        if(!arr){
+            return [];
+        }
+        for (var i = 0; i < arr.length; i++) {
+            if (arr[i] === key) {
+                arr.splice(i, 1);
+                break;
+            }
+        }
+        arr.unshift(key);
+        return arr;
+    }
+
+    sendMsg(friend, content){
+        content = content.trim();
+        if(!friend || !friend.username || !content || content.length ==0) return;
+        const msg = {
+            uuid: this._uuid,
+            to: friend.username,
+            content:content
+        };
+        this.newMsg = null ;
+        this.socket.emit('sendMsg' , msg , function (status) {
+        });
+    }
 
 
 }
+
+
+

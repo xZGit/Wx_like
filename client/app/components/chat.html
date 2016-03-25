@@ -1,11 +1,26 @@
 <section>
 
-    <div id="qrcode">56565</div>
+    <div class="chat_box">
+        <div class="chat_head"> Chat Box</div>
+        <div class="chat_body">
+            <div class="user" (click)="setChatFriend(friend)"  *ngFor="#friend of friends"> {{ friend.nickname}}<span class="msg_tip" *ngIf=" friend.msgCount !== 0">{{ friend.msgCount}} </span></div>
+        </div>
+    </div>
 
-    <ul>
-        <li *ngFor="#friend of friends">
-            {{ friend.nickname }} {{friend.ss}}
-        </li>
-    </ul>
+    <div class="msg_box"  *ngIf="chatFriend">
+        <div class="msg_head">{{chatFriend.nickname}}
+            <div class="close">x</div>
+        </div>
+        <div class="msg_wrap">
+            <div class="msg_body">
+                <div *ngFor="#msg of chatFriend.msg" [class]="msg.type == 'send' ? 'msg_b' : 'msg_a'" >{{msg.content}}</div>
+                <div class="msg_push"></div>
+            </div>
+            <div class="msg_footer"><textarea [(ngModel)]="newMsg" autofocus="" (keyup.enter)="sendMsg(chatFriend, newMsg)" class="msg_input" rows="4" ></textarea></div>
+        </div>
+    </div>
+
 
 </section>
+
+
