@@ -3,21 +3,22 @@
  */
 const botInstance = require('./wc-instance');
 
-const IO = require( 'koa-socket' );
+const IO = require('koa-socket');
 const socket = new IO();
+const debug = require('debug')('app:socket');
 
 module.exports = function (app, config) {
 
-    socket.attach( app );
+    socket.attach(app);
 
 
     socket.use(async (ctx, next) => {
-        console.log('Socket middleware');
-        console.log('ctx:', ctx.event, ctx.data, ctx.socket.id);
+        debug('Socket middleware');
+        debug('ctx:', ctx.event, ctx.data, ctx.socket.id);
         const start = new Date;
         await next();
         const ms = new Date - start;
-        console.log(`WS ${ ms }ms`)
+        debug(`WS ${ ms }ms`)
     });
 
 
@@ -28,17 +29,18 @@ module.exports = function (app, config) {
 
 
     socket.on('connection', ctx => {
-        console.log('Join event', ctx.socket.id);
+        debug('Join event', ctx.socket.id);
     });
 
 
-
-    socket.on('login' , ctx => {
+    socket.on('login', ctx => {
         let bot = botInstance.get(ctx.data);
-        if(!bot) {
+        if (!bot) {
             ctx.acknowledge('error');
             return
         }
+        ctx.socket.uuid = ctx.data;
+        bot.socket = ctx.socket;
         ctx.acknowledge('success');
     })
 

@@ -6,7 +6,9 @@
 const router = require('koa-router')();
 const fs = require( 'fs' );
 const path = require( 'path' );
+const debug = require('debug')('app:router');
 const botInstance = require('./wc-instance');
+
 import  Wechat from './wechat';
 
 module.exports = function routers(app, config){
@@ -30,12 +32,14 @@ module.exports = function routers(app, config){
         let bot = botInstance.get(ctx.params.uuid);
         ctx.body = await bot.start()
             .then(() => {
+                debug('success login')
                 bot.on('logout', () => {
                     botInstance.delete[ctx.params.uuid];
                 });
                 return {status: 0};
             })
             .catch(err => {
+                debug('login err', err);
                 botInstance.delete[ctx.params.uuid];
                 return {status: 1};
             });
