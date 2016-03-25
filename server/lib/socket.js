@@ -44,5 +44,18 @@ module.exports = function (app, config) {
         ctx.acknowledge('success');
     })
 
+    socket.on('sendMsg', ctx => {
+        let bot = botInstance.get(ctx.data.uuid);
+        if (!bot) {
+            ctx.acknowledge('error');
+            return
+        }
+        bot.send(ctx.data.content, ctx.data.to);
+        ctx.acknowledge('success');
+    })
+
+
+
+
 
 };

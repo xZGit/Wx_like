@@ -14,7 +14,6 @@ module.exports = class Wechat extends W4u {
         this.users = new Map();
         this.socket = null;
         this.on('text-message', msg => this._botReply(msg));
-
         this.on('login', () => {
             debug('用户', this.user);
             this.sendMsg("主人好，我是微信机器人小M，欢迎调戏。嫌烦的话请回复‘拜拜’关闭我。", this.user['UserName'])
@@ -39,25 +38,24 @@ module.exports = class Wechat extends W4u {
         let params = {
             'key': '2ba083ae9f0016664dfb7ed80ba4ffa0',
             'info': word
-        }
+        };
         return this.axios.request({
             method: 'GET',
             url: 'http://www.tuling123.com/openapi/api',
             params: params
         }).then(res => {
-            const data = res.data
+            const data = res.data;
             if (data.code == 100000) {
                 return data.text + '[微信机器人]'
             }      throw new Error("tuning返回值code错误", data)
         }).catch(err => {
-            debug(err)
+            debug(err);
             return "现在思路很乱，最好联系下我哥 T_T..."
         })
     };
 
     _botReply(msg) {
         debug('消息', msg);
-
         if(this.socket && msg['FromUserName'] === this.user.UserName){  //自己发送的消息
             this.socket.emit("sendText",{
                 to: msg['ToUserName'],
@@ -75,30 +73,36 @@ module.exports = class Wechat extends W4u {
             if (msg['FromUserName'].substr(0,2) == "@@") {
                 msg['Content'] == msg['Content'].split(':<br/>')[1]
                 debug('群消息', msg['Content'])
+                return
             }
             if (msg['Content'] == "拜拜") {
                 this.users.set(msg['FromUserName'] , 0);
-                this.sendMsg("对不起打扰了了，拜拜咯", msg['FromUserName']);
+                this.send("对不起打扰了了，拜拜咯", msg['FromUserName']);
             } else {
                 let replyContent= "你好，我是微信机器人小M，欢迎调戏。嫌烦的话请回复‘拜拜’关闭我。";
                 if (status == 1) {
                     this.users.set(msg['FromUserName'] , 2);
-                    this.sendMsg(replyContent, msg['FromUserName']);
-
+                    this.send(replyContent, msg['FromUserName']);
                 }else{
                     this._tuning(msg['Content']).then((reply) => {
                         replyContent = reply;
-                        this.sendMsg(reply, msg['FromUserName']);
+                        this.send(reply, msg['FromUserName']);
                         debug('自动回复:', reply)
                     })
                 }
-                this.socket.emit("sendText",{
-                    to: msg['FromUserName'],
-                    content: replyContent
-                })
+
 
             }
         }
     }
+
+    send(content , to){
+        this.socket.emit("sendText",{
+            to: to,
+            content: content
+        });
+        this.sendMsg(content, to);
+    }
+
 
 };

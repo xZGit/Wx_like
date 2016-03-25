@@ -32,15 +32,16 @@ module.exports = function routers(app, config){
         let bot = botInstance.get(ctx.params.uuid);
         ctx.body = await bot.start()
             .then(() => {
-                debug('success login')
+                debug('success login');
                 bot.on('logout', () => {
-                    botInstance.delete[ctx.params.uuid];
+                    debug("logout" , ctx.params.uuid);
+                    botInstance.delete(ctx.params.uuid);
                 });
                 return {status: 0};
             })
             .catch(err => {
                 debug('login err', err);
-                botInstance.delete[ctx.params.uuid];
+                botInstance.delete(ctx.params.uuid);
                 return {status: 1};
             });
     });
