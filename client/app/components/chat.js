@@ -12,6 +12,8 @@ import {UuidLocalStore} from '../services/store';
 import {HttpService} from '../services/http';
 import chatTemplate from './chat.html';
 import IO  from 'socket.io-client';
+import * as Rx from 'rxjs/Rx';
+
 
 @Component({
     selector: 'chat',
@@ -19,12 +21,49 @@ import IO  from 'socket.io-client';
     providers: [HTTP_PROVIDERS, HttpService],
 })
 export class Chat {
+
     constructor(uuidStore:UuidLocalStore, http:HttpService, router:Router) {
         this._uuidStore = uuidStore;
         this._router = router;
         this._http = http;
+        this.friends = [];
         this.friendsMap = new Map();
+        this._sourceFriends = [];
+        this.searchEventEmitter = new Rx.Subject();
+        this.searchEventEmitter
+            .debounceTime(700)
+            .subscribe(key => {
+                    this.friends = [];
+                    let l = this._sourceFriends.length;
+                    while (l > 0) {
+                        l--;
+                        if (this._sourceFriends[l].nickname.indexOf(key) >= 0) {
+                            console.log(this._sourceFriends[l].nickname);
+                            this.friends.push(this._sourceFriends[l]);
+                        }
+                }
+
+            }, error => {
+                console.log('error logged:');
+                console.log(error);
+            });
     }
+
+    search(key) {
+        if(!key || key.length == 0){
+            this.friends = this._sourceFriends;
+            return
+        }
+        this.searchEventEmitter.next(key);
+    }
+
+
+    setChatFriend(friend) {
+        friend.msgCount = 0;
+        this.chatFriend = friend;
+        console.log(this.chatFriend);
+    }
+
 
     ngOnInit() {
         this._uuid = this._uuidStore.get();
@@ -45,16 +84,12 @@ export class Chat {
         this._router.navigate(['Login']);
     }
 
-    setChatFriend(friend) {
-        friend.msgCount = 0;
-        this.chatFriend = friend;
-        console.log(this.chatFriend);
-    }
 
     getFriends() {
         this._http.getFriends(this._uuid).then(res=> {
             console.log(res);
             if (res.status == 0) {
+                this._sourceFriends = res.friends;
                 this.friends = res.friends;
                 for (let f of  this.friends.values()) {
                     f.msg = [];
@@ -62,7 +97,7 @@ export class Chat {
                     this.friendsMap.set(f.username, f);
                 }
             } else {
-                //this.backLogin();
+                this.backLogin();
             }
         });
     }
@@ -98,7 +133,6 @@ export class Chat {
                 self.scroll();
             }
         });
-
     }
 
     sort(arr, key) {

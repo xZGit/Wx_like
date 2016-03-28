@@ -22,6 +22,14 @@
     border-radius:5px 5px 0px 0px;
 }
 
+.chat_search{
+    background:white;
+    padding:15px;
+}
+
+.chat_search_input{
+}
+
 .msg_tip{
     margin-left: 15px;
     width: 20px;

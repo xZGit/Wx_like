@@ -2,6 +2,7 @@
 
     <div class="chat_box">
         <div class="chat_head"> Chat Box</div>
+        <div class="chat_search"><input class="chat_search_input" #term (keyup)="search(term.value)"></div>
         <div class="chat_body">
             <div class="user" (click)="setChatFriend(friend)"  *ngFor="#friend of friends"> {{ friend.nickname}}<span class="msg_tip" *ngIf=" friend.msgCount !== 0">{{ friend.msgCount}} </span></div>
         </div>
