@@ -41,7 +41,7 @@ module.exports = {
   },
 
   resolve: {
-    root: __dirname,
+    root: path.resolve(__dirname, '../../'),
     extensions: ['','.js','.json']
   },
 

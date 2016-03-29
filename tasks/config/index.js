@@ -10,7 +10,7 @@ module.exports = {
     destination: 'dist/server'
   },
   general: {
-    source: ['package.json', 'Procfile'],
+    source: ['package.json'],
     destination: 'dist'
   },
   liveReload: {
