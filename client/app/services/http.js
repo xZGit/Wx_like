@@ -21,4 +21,17 @@ export class HttpService {
         });
 
     }
+
+    tollRobot(uuid) {
+
+        return new Promise((resolve, reject) => {
+            this._http.get(`/robot/${uuid}`).subscribe(
+                res=>resolve(res.json()),
+                err => reject(err)
+            );
+        });
+
+    }
+
+
 }

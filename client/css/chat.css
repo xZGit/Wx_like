@@ -3,12 +3,13 @@
 .chat_box{
     position:fixed;
     left:200px;
-    top:50px;
+    top:5px;
     width:250px;
+    height: 100%;
 }
 .chat_body{
     background:white;
-    height:400px;
+    height:100%;
     padding:5px 0px;
     overflow: scroll;
 }
@@ -27,7 +28,19 @@
     padding:15px;
 }
 
+
+.chat_robot{
+    background:white;
+    padding:2px;
+}
+
 .chat_search_input{
+    padding-right: 14px;
+    padding-left: 14px;
+    margin-bottom: 0;
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
 }
 
 .msg_tip{
@@ -40,9 +53,10 @@
 }
 .msg_box{
     position:fixed;
-    top:50px;
-    width:350px;
-    left: 500px;
+    top:5px;
+    width:550px;
+    left: 452px;
+    height: 100%;
     background:white;
     border-radius:5px 5px 0px 0px;
     overflow: scroll;
@@ -51,10 +65,13 @@
 .msg_head{
     background:#3498db;
 }
+.msg_wrap{
+    height: 75%;
+}
 
 .msg_body{
     background:white;
-    height:200px;
+    height:90%;
     font-size:12px;
     padding:15px 15px 40px 15px;
     overflow:auto;
@@ -68,10 +85,12 @@
     -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
     -moz-box-sizing: border-box;    /* Firefox, other Gecko */
     box-sizing: border-box;
+    height: 150px;
 }
 
 .msg_footer{
-    margin-top: 5px;
+    bottom: 0;
+    width: 100%;
 }
 
 

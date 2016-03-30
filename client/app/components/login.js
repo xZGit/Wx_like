@@ -30,11 +30,12 @@ export class Login {
       }
       setTimeout(() =>{
         this.qrcode = new QRCode("qrcode", `https://login.weixin.qq.com/l/${res.uuid}`);
-        setTimeout(() => {this.checkLogin()}, 5000)
       },0);
+      setTimeout(() => {this.checkLogin()}, 5000)
       return this._uuid;
     });
   }
+
 
   clearQrcode(){
     document.getElementById("qrcode").innerHTML =null;
@@ -48,11 +49,10 @@ export class Login {
         this._router.navigate( ['Chat']);
         return;
       }else{
-        this.showQrcode();
+        setTimeout(() => {this.checkLogin()}, 5000)
       }
     });
   }
-
 
   ngOnInit(){
     this.showQrcode();

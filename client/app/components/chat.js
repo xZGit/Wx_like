@@ -28,7 +28,9 @@ export class Chat {
         this._http = http;
         this.friends = [];
         this.friendsMap = new Map();
+        this.user = {NickName:""};
         this._sourceFriends = [];
+        this.robot = false;
         this.searchEventEmitter = new Rx.Subject();
         this.searchEventEmitter
             .debounceTime(700)
@@ -81,11 +83,13 @@ export class Chat {
     }
 
     backLogin() {
+        this.socket.disconnect();
         this._router.navigate(['Login']);
     }
 
-
+    //https://wx2.qq.com/
     getFriends() {
+
         this._http.getFriends(this._uuid).then(res=> {
             console.log(res);
             if (res.status == 0) {
@@ -101,14 +105,21 @@ export class Chat {
             }
         });
     }
-
+    toggleRobot(){
+        this._http.tollRobot(this._uuid).then(res=> {
+            if(res.status ==1){
+                this.robot = res.open;
+            }
+        });
+    }
     initSocket(socket) {
         const self = this;
-        socket.emit('login', self._uuid, function (status) {
-            console.log("login", status);
-            if (status != "success") {
+        socket.emit('login', self._uuid, function (data) {
+            console.log("login", data);
+            if (data == "error") {
                 self.backLogin();
             }
+            self.user = data;
             self.getFriends();
         });
 
