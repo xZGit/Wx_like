@@ -10,8 +10,6 @@ let cleanTask = require('./tasks/clean');
 let generalCopyTask = require('./tasks/general_copy');
 let serverBuildTask = require('./tasks/server_build');
 
-
-
 gulp.task('server-start', serverStartTask());
 
 gulp.task('livereload', liveReloadTask());
@@ -31,7 +29,7 @@ gulp.task('clean', cleanTask());
 
 
 
-gulp.task('run', function(done) {
+gulp.task('dev', function(done) {
   runSequence(
     'clean',
     ['client-build', 'client-copy', 'livereload'],

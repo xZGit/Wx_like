@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/xZGit/live_server.git"
+    "url": "git+https://github.com/xZGit/Wx_like.git"
   },
   "author": "",
   "license": "ISC",
@@ -57,7 +57,7 @@
     "zone.js": "0.5.10"
   },
   "bugs": {
-    "url": "https://github.com/xZGit/live_server/issues"
+    "url": "https://github.com/xZGit/Wx_like/issues"
   },
-  "homepage": "https://github.com/xZGit/live_server#readme"
+  "homepage": "https://github.com/xZGit/Wx_like#readme"
 }
