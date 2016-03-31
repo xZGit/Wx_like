@@ -17,7 +17,8 @@
     "koa-convert": "^1.2.0",
     "koa-router": "^7.0.1",
     "koa-socket": "^4.2.1",
-    "koa-static": "^2.0.0"
+    "koa-static": "^2.0.0",
+    "wechat4u": "^0.2.6"
   },
   "devDependencies": {
     "angular2": "2.0.0-beta.1",

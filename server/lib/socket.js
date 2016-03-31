@@ -7,7 +7,7 @@ const IO = require('koa-socket');
 const socket = new IO();
 const debug = require('debug')('app:socket');
 
-module.exports = function (app, config) {
+module.exports = function(app, config) {
 
     socket.attach(app);
 
@@ -20,7 +20,6 @@ module.exports = function (app, config) {
         const ms = new Date - start;
         debug(`WS ${ ms }ms`)
     });
-
 
     /**
      * Socket handlers
@@ -41,8 +40,8 @@ module.exports = function (app, config) {
         }
         ctx.socket.uuid = ctx.data;
         bot.socket = ctx.socket;
-        ctx.acknowledge('success');
-    })
+        ctx.acknowledge(bot.user);
+    });
 
     socket.on('sendMsg', ctx => {
         let bot = botInstance.get(ctx.data.uuid);

@@ -13,6 +13,7 @@ module.exports = class Wechat extends W4u {
         this.members = [];
         this.users = new Map();
         this.socket = null;
+        this.openRobot = false;
         this.on('text-message', msg => this._botReply(msg));
         this.on('login', () => {
             debug('用户', this.user);
@@ -44,10 +45,18 @@ module.exports = class Wechat extends W4u {
             url: 'http://www.tuling123.com/openapi/api',
             params: params
         }).then(res => {
-            const data = res.data;
-            if (data.code == 100000) {
-                return data.text + '[微信机器人]'
-            }      throw new Error("tuning返回值code错误", data)
+            const body = res.data;
+            if (body.code == 100000) {
+                return body.text + "[微信机器人]" ;
+            } else if (body.code == 200000) {
+                return body.text + ": " + body.url;
+            } else if (body.code == 302000) {
+                return body.list.map(n=>n.article + ": " + n.detailurl).join('\n');
+            } else if (body.code == 308000) {
+               return body.text + '\n' + body.list.map(n=>n.name + ": " + n.info + "<" + n.detailurl + ">").join('\n');
+            } else {
+                return "现在思路很乱，最好联系下我哥 T_T..."
+            }
         }).catch(err => {
             debug(err);
             return "现在思路很乱，最好联系下我哥 T_T..."
@@ -56,6 +65,12 @@ module.exports = class Wechat extends W4u {
 
     _botReply(msg) {
         debug('消息', msg);
+
+        if (msg['FromUserName'].substr(0,2) == "@@") {
+            msg['Content'] == msg['Content'].split(':<br/>')[1]
+            debug('群消息', msg['Content'])
+        }
+
         if(this.socket && msg['FromUserName'] === this.user.UserName){  //自己发送的消息
             this.socket.emit("sendText",{
                 to: msg['ToUserName'],
@@ -67,14 +82,16 @@ module.exports = class Wechat extends W4u {
                 content: msg['Content']
             })
         }
+
+        if(!this.openRobot) {
+            debug(`robot is close`);
+            return
+        }
+
+
         const status = this.users.has(msg['FromUserName']) ? this.users.get(msg['FromUserName']) : 0 ;
         debug(`begin reply auto status : ${status}`);
         if (status !== 0) {
-            if (msg['FromUserName'].substr(0,2) == "@@") {
-                msg['Content'] == msg['Content'].split(':<br/>')[1]
-                debug('群消息', msg['Content'])
-                return
-            }
             if (msg['Content'] == "拜拜") {
                 this.users.set(msg['FromUserName'] , 0);
                 this.send("对不起打扰了了，拜拜咯", msg['FromUserName']);
@@ -90,8 +107,6 @@ module.exports = class Wechat extends W4u {
                         debug('自动回复:', reply)
                     })
                 }
-
-
             }
         }
     }
