@@ -65,10 +65,11 @@ module.exports = class Wechat extends W4u {
 
     _botReply(msg) {
         debug('消息', msg);
-
+        let isQun = false ;
         if (msg['FromUserName'].substr(0,2) == "@@") {
-            msg['Content'] == msg['Content'].split(':<br/>')[1]
-            debug('群消息', msg['Content'])
+            msg['Content'] = msg['Content'].split(':<br/>')[1];
+            debug('群消息', msg['Content']);
+            isQun = true;
         }
 
         if(this.socket && msg['FromUserName'] === this.user.UserName){  //自己发送的消息
@@ -83,8 +84,8 @@ module.exports = class Wechat extends W4u {
             })
         }
 
-        if(!this.openRobot) {
-            debug(`robot is close`);
+        if(!this.openRobot || isQun) {
+            debug(`robot is close or is qun msg`);
             return
         }
 
@@ -92,6 +93,7 @@ module.exports = class Wechat extends W4u {
         const status = this.users.has(msg['FromUserName']) ? this.users.get(msg['FromUserName']) : 0 ;
         debug(`begin reply auto status : ${status}`);
         if (status !== 0) {
+
             if (msg['Content'] == "拜拜") {
                 this.users.set(msg['FromUserName'] , 0);
                 this.send("对不起打扰了了，拜拜咯", msg['FromUserName']);

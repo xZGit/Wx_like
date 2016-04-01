@@ -162,7 +162,7 @@ export class Chat {
     }
 
     scroll() {
-        document.getElementById("msg_body").scrollTop = 1000000;
+       if(document.getElementById("msg_body")) document.getElementById("msg_body").scrollTop = 1000000;
     }
 
 
